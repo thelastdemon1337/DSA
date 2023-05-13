@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 class Node {
@@ -19,119 +19,110 @@ class Node {
 };
 
 class LinkedList {
-
-
-  public :
+  public:
   Node* head;
   LinkedList() { head = NULL; }
 
-  void appendNode(int);
-
-  void deleteNode(int);
-
-  void deleteNodeAtPosition(int);
-
+  void append(int);
   void printList();
-
   bool searchList(int);
-
-  void reverseLinkedList();
-
+  void deleteValue(int);
+  void deleteAtPosition(int);
+  void insert(int, int);
+  void reverse();
   Node* recursiveReverse(Node*);
-
   Node* kReverse(Node*, int);
 };
 
-void LinkedList::appendNode(int data) {
+void LinkedList::append(int data) {
   Node* newNode = new Node(data);
-
   if(head == NULL) {
     head = newNode;
     return;
   }
-
-  Node* temp  = head;
-
-  while(temp->next != NULL) temp=temp->next;
-  temp->next = newNode;
+  Node* temp = head;
+  while(temp->next != NULL) temp = temp->next;
+  temp->next = newNode;  
 }
 
 void LinkedList::printList() {
+  if(head == NULL) return;
   Node* temp = head;
-
   while(temp != NULL) {
     cout<<temp->data<<" ";
-    temp=temp->next;
+    temp = temp->next;
   }
   cout<<endl;
 }
 
-void LinkedList::deleteNodeAtPosition(int pos) {
-  Node* temp = head;
-  int len = 0;
-  // Calculating length
-  while(temp != NULL){
-    len++;
-    temp=temp->next;
-  }
-  
-  // Edge case : Empty list
-  if(head == NULL) return;
-  // Edge case : pos == 0
-  if(pos==0){
-    temp = head;
-    head = temp->next;
-    delete temp;
-    return;
-  }
-  // Edge case : position out of range
-  if(pos >= len) {
-    cout<<"Index out of range!";
-    return;
-  }
-
-  temp = head;
-  Node* nodeToDelete;
-  int i = 0;
-  // get a pointer to pos - 1 postion
-  while(i < pos - 1) {
-    temp=temp->next;
-    i++;
-  }
-  nodeToDelete = temp->next;
-  temp->next = nodeToDelete->next;
-  delete nodeToDelete;
-}
-
-void LinkedList::deleteNode(int val) {
-  Node* temp = head;
-  // Empty list
-  if(head==NULL) return;
-  // First element
-  if(temp->data == val) {
-    head = temp->next;
-    delete temp;
-    return;
-  }
-  // Rest of the list
-  while(temp->next->data != val) temp=temp->next;
-  Node* nodeToDelete = temp->next;
-  temp->next = nodeToDelete->next;
-  delete nodeToDelete;
-}
-
 bool LinkedList::searchList(int val) {
-  Node *temp = head;
-  if(head == NULL) return false;
+  Node* temp = head;
   while(temp != NULL) {
     if(temp->data == val) return true;
-    temp=temp->next;
+    temp = temp->next;
   }
   return false;
 }
 
-void LinkedList::reverseLinkedList() {
-  
+void LinkedList::deleteValue(int val) {
+  Node* temp = head;
+  if(val == head->data) {
+    head = head->next;
+    delete temp;
+    return;
+  }
+  while(temp->next->data != val && temp != NULL) temp = temp->next;
+  Node* toDelete = temp->next;
+  temp->next = toDelete->next;
+  delete toDelete;
+}
+
+void LinkedList::deleteAtPosition(int pos) {
+  Node* temp = head;
+  if(head == NULL) return;
+  if(pos == 0) {
+    head = temp->next;
+    delete temp;
+    return;
+  }
+  int len = 0, index = 0;
+  while(temp != NULL) {
+    len++;
+    temp = temp->next;
+  }
+  if(pos >= len) {
+    cout<< "Index out of range";
+    return;
+  }
+  temp = head;
+  while(index != pos - 1) {
+    temp = temp->next;
+    index++;
+  }
+  Node* toDelete = temp->next;
+  temp->next = toDelete->next;
+  delete toDelete;
+}
+
+void LinkedList::insert(int data, int pos) {
+  Node* newNode = new Node(data);
+  if(head == NULL) head = newNode;
+  Node* temp = head;
+  if(pos == 0) {
+    newNode->next = head;
+    head = newNode;
+    return;
+  }
+  int index = 0;
+  while(index != pos-1) {
+    temp = temp->next;
+    index++;
+  }
+  newNode->next = temp->next;
+  temp->next = newNode;
+}
+
+void LinkedList::reverse() {
   Node* prev = NULL;
   Node* curr = head;
   Node* next = curr->next;
@@ -145,23 +136,22 @@ void LinkedList::reverseLinkedList() {
   head = prev;
 }
 
-Node* LinkedList::recursiveReverse(Node *head){
+Node* LinkedList::recursiveReverse(Node* head) {
   if(head == NULL || head->next == NULL) return head;
 
   Node* newHead = recursiveReverse(head->next);
-  head->next->next  = head;
+  head->next->next = head;
   head->next = NULL;
-  
+
   return newHead;
 }
 
-Node* LinkedList::kReverse(Node *head, int k) {
+Node* LinkedList::kReverse(Node* head, int k) {
   Node* prev = NULL;
   Node* curr = head;
   Node* next;
 
   int count = 0;
-
   while(curr != NULL && count < k) {
     next = curr->next;
     curr->next = prev;
@@ -169,44 +159,22 @@ Node* LinkedList::kReverse(Node *head, int k) {
     curr = next;
     count++;
   }
-
   if(next != NULL) {
     head->next = kReverse(next, k);
   }
-
   return prev;
 }
 
 int main() {
   LinkedList list1;
+  list1.append(1);
+  list1.append(2);
+  list1.append(3);
+  list1.append(4);
+  list1.append(5);
+  list1.append(6);
 
-  list1.appendNode(1);
-  list1.appendNode(2);
-  list1.appendNode(3);
-  list1.appendNode(4);
-  // list1.appendNode(5);
-  // list1.appendNode(6);
   list1.printList();
-  
-  int k = 2;
-  list1.head = list1.kReverse(list1.head, k);
+  list1.head = list1.kReverse(list1.head, 2);
   list1.printList();
-  // Iterative Reverse
-  // list1.reverseLinkedList();
-  // list1.printList();
-
-  // Recursive Reverse
-  // if(Node* newHead = list1.recursiveReverse(list1.head)) list1.head = newHead; 
-  // list1.printList();
-
-  // K reverse
-
-
-
-  // Basic functionalities
-  // list1.deleteNodeAtPosition(0);
-  // list1.printList();
-  // list1.deleteNode(1);
-  // list1.printList();
-  // cout<<list1.searchList(1)<<endl;
 }
